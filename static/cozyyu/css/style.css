@@ -79,6 +79,9 @@ a{color:inherit;text-decoration:none}
 
 /* recommendation */
 .recommendations{padding:24px 0}
+.recommendation-banner{position:relative;display:flex;justify-content:center}
+.recommendation-banner img{max-width:600px;width:100%;height:auto;border-radius:12px}
+.recommendation-message{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:90%;max-width:500px}
 .recommendation-list{display:flex;gap:12px;flex-wrap:wrap;overflow:visible}
 .card{background:#fff;border-radius:8px;padding:8px;min-width:180px}
 .card img{width:100%;height:140px;object-fit:cover;border-radius:6px}
@@ -160,8 +163,6 @@ a{color:inherit;text-decoration:none}
     font-size: 0.9rem !important;
     margin: 0 !important;
 }
-
-/* footer */
 .cy-footer{background:#222;color:#fff;padding:28px 0;margin-top:36px}
 .footer-grid{display:flex;gap:24px}
 .footer-grid h4{margin:0 0 8px}
