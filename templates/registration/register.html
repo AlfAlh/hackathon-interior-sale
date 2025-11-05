@@ -1,0 +1,29 @@
+{% extends 'cozyyu/base.html' %}
+
+{% block content %}
+<div class="container" style="padding:40px 0">
+    <h2>Регистрация</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label>Имя пользователя</label><br>
+            {{ form.username }}
+        </div>
+        <div>
+            <label>E-mail</label><br>
+            <input type="email" name="email" required>
+        </div>
+        <div>
+            <label>Пароль</label><br>
+            {{ form.password1 }}
+        </div>
+        <div>
+            <label>Подтвердите пароль</label><br>
+            {{ form.password2 }}
+        </div>
+        <div style="margin-top:12px">
+            <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

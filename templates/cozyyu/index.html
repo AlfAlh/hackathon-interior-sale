@@ -1,0 +1,110 @@
+{% extends 'cozyyu/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- 2nd tier: hero -->
+<section class="hero">
+    <div class="hero-inner container">
+        <div class="hero-text">
+            <h1>Cozy UY</h1>
+            <p>Современная мебель и интерьерные решения</p>
+            <a href="#products" class="btn btn-primary">Купить сейчас</a>
+        </div>
+        <div class="hero-image">
+            <img src="{% static 'cozyyu/images/hero.jpg' %}" alt="hero">
+        </div>
+    </div>
+</section>
+
+<!-- 3rd tier: categories (bigger tiles with images) -->
+<section class="categories container">
+    <h2>Категории</h2>
+    <div class="category-grid">
+        {% for card in category_cards %}
+            <a class="category-tile" href="{% url 'item:items' %}?category_name={{ card.token }}">
+                <div class="category-image">
+                    {% if card.image_url %}
+                        <img src="{{ card.image_url }}" alt="{{ card.name }}">
+                    {% else %}
+                        <img src="{% static 'cozyyu/images/category-placeholder.svg' %}" alt="{{ card.name }}">
+                    {% endif %}
+                </div>
+                <div class="category-label">{{ card.name }}</div>
+            </a>
+        {% empty %}
+            <p>Категории отсутствуют</p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- 4th tier: recommendations -->
+<section class="recommendations">
+    <div class="recommendations-inner container">
+        <h2>Рекомендации</h2>
+            <div class="recommendation-banner">
+                <img src="{% static 'cozyyu/images/recommendations.jpg' %}" alt="reco">
+                <div class="recommendation-message">
+                    <p>Мы подобрали несколько идей для вашего интерьера — все предложения доступны в каталоге.</p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                        <a class="btn btn-primary" href="{% url 'item:recommendations' %}" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+                                <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+                                <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                            Алгоритм рекомендаций
+                        </a>
+                        <a class="btn btn-primary" href="{% url 'item:items' %}">Перейти в каталог</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5th tier: products grid -->
+<section id="products" class="products container">
+    <h2>Товары</h2>
+    <div class="product-grid">
+        {% for p in products %}
+            <article class="product-card">
+                <a href="/item/{{ p.id }}/">
+                    {% if p.image %}
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                    {% else %}
+                        <img src="{% static 'cozyyu/images/item-placeholder.svg' %}" alt="{{ p.name }}">
+                    {% endif %}
+                    <h3>{{ p.name }}</h3>
+                </a>
+                <div class="price">{{ p.price_tg }} ₸</div>
+            </article>
+        {% empty %}
+            <p>Товары отсутствуют</p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- 6th tier: random products + footer info is in base -->
+<section class="random-products container">
+    <h2>Вам может понравиться</h2>
+    <div class="product-grid">
+        {% for p in random_products %}
+            <article class="product-card">
+                <a href="/item/{{ p.id }}/">
+                    {% if p.image %}
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                    {% else %}
+                        <img src="{% static 'cozyyu/images/item-placeholder.svg' %}" alt="{{ p.name }}">
+                    {% endif %}
+                    <h3>{{ p.name }}</h3>
+                </a>
+                <div class="price">{{ p.price_tg }} ₸</div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

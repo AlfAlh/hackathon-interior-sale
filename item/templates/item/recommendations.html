@@ -1,0 +1,404 @@
+{% extends 'cozyyu/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+    .recommendations-page {
+        background: #f8f9fa;
+        min-height: calc(100vh - 200px);
+        padding: 2rem 0;
+    }
+    
+    .rec-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .rec-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .rec-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .rec-header p {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .rec-search-section {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .rec-search-box {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .rec-search-box input {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .rec-search-box input:focus {
+        outline: none;
+        border-color: var(--accent, #3498db);
+    }
+    
+    .rec-search-box button {
+        padding: 1rem 2rem;
+        background: var(--accent, #3498db);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .rec-search-box button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+    
+    .selected-item-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+    
+    .selected-item-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: white;
+        flex-shrink: 0;
+    }
+    
+    .selected-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .selected-item-info h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .selected-item-details {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .detail-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .product-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        cursor: pointer;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 280px;
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+    
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .product-card:hover .product-image img {
+        transform: scale(1.1);
+    }
+    
+    .product-info {
+        padding: 1.5rem;
+    }
+    
+    .product-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-meta {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .product-tag {
+        background: #e9ecef;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: #495057;
+    }
+    
+    .product-tag.style {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    .product-tag.color {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+    
+    .product-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--accent, #3498db);
+    }
+    
+    .rec-section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #7f8c8d;
+    }
+    
+    .empty-state svg {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 2rem;
+        opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #495057;
+    }
+    
+    .catalog-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 3rem;
+        text-align: center;
+        margin: 3rem 0;
+    }
+    
+    .catalog-banner h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .catalog-banner p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+    
+    .catalog-banner .btn {
+        background: white;
+        color: #667eea;
+        padding: 1rem 2.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .catalog-banner .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="recommendations-page">
+    <div class="rec-container">
+        <div class="rec-header">
+            <h1>🎯 Алгоритм рекомендаций</h1>
+            <p>Выберите любой товар из каталога, и мы подберем похожие товары с совпадающим стилем и цветом</p>
+        </div>
+        
+        <!-- Search Section -->
+        <div class="rec-search-section">
+            <form method="get" action="{% url 'item:recommendations' %}" class="rec-search-box">
+                <input 
+                    type="text" 
+                    name="query" 
+                    value="{{ query }}" 
+                    placeholder="Поиск товара: диван, кресло, лампа..."
+                    autocomplete="off"
+                >
+                <button type="submit">Искать</button>
+            </form>
+            
+            {% if not selected_item %}
+                <div class="product-grid">
+                    {% for item in available_items %}
+                        <a href="{% url 'item:recommendations' %}?item_id={{ item.id }}" class="product-card">
+                            <div class="product-image">
+                                {% if item.image %}
+                                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <img src="{% static 'cozyyu/images/item-placeholder.svg' %}" alt="{{ item.name }}">
+                                {% endif %}
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">{{ item.name }}</div>
+                                <div class="product-meta">
+                                    {% if item.style %}
+                                        <span class="product-tag style">{{ item.get_style_display|default:item.style }}</span>
+                                    {% endif %}
+                                    {% if item.color %}
+                                        <span class="product-tag color">{{ item.color }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="product-price">{{ item.price_tg|floatformat:0 }} ₸</div>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <div class="empty-state" style="grid-column: 1 / -1;">
+                            <h3>Товары не найдены</h3>
+                            <p>Попробуйте изменить поисковый запрос</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Selected Item & Recommendations -->
+        {% if selected_item %}
+            <div class="selected-item-banner">
+                <div class="selected-item-image">
+                    {% if selected_item.image %}
+                        <img src="{{ selected_item.image.url }}" alt="{{ selected_item.name }}">
+                    {% else %}
+                        <img src="{% static 'cozyyu/images/item-placeholder.svg' %}" alt="{{ selected_item.name }}">
+                    {% endif %}
+                </div>
+                <div class="selected-item-info">
+                    <h2>{{ selected_item.name }}</h2>
+                    <p>Выбранный товар для рекомендаций</p>
+                    <div class="selected-item-details">
+                        {% if selected_item.style %}
+                            <div class="detail-badge">
+                                <strong>Стиль:</strong> {{ selected_item.get_style_display|default:selected_item.style }}
+                            </div>
+                        {% endif %}
+                        {% if selected_item.color %}
+                            <div class="detail-badge">
+                                <strong>Цвет:</strong> {{ selected_item.color }}
+                            </div>
+                        {% endif %}
+                        <div class="detail-badge">
+                            <strong>Цена:</strong> {{ selected_item.price_tg|floatformat:0 }} ₸
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if recommended_items %}
+                <h2 class="rec-section-title">✨ Персональные рекомендации для вас</h2>
+                <div class="product-grid">
+                    {% for item in recommended_items %}
+                        <a href="{% url 'item:detail' item.id %}" class="product-card">
+                            <div class="product-image">
+                                {% if item.image %}
+                                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <img src="{% static 'cozyyu/images/item-placeholder.svg' %}" alt="{{ item.name }}">
+                                {% endif %}
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">{{ item.name }}</div>
+                                <div class="product-meta">
+                                    {% if item.style %}
+                                        <span class="product-tag style">{{ item.get_style_display|default:item.style }}</span>
+                                    {% endif %}
+                                    {% if item.color %}
+                                        <span class="product-tag color">{{ item.color }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="product-price">{{ item.price_tg|floatformat:0 }} ₸</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>Рекомендации не найдены</h3>
+                    <p>К сожалению, не удалось найти товары с совпадающим стилем или цветом</p>
+                    <p style="margin-top: 1rem;">
+                        <a href="{% url 'item:recommendations' %}" style="color: var(--accent, #3498db);">← Выбрать другой товар</a>
+                    </p>
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- Banner when no item selected -->
+            <div class="catalog-banner">
+                <h2>Мы подобрали несколько идей для вашего интерьера</h2>
+                <p>Все предложения доступны в каталоге</p>
+                <a href="{% url 'item:items' %}" class="btn">Перейти в каталог</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

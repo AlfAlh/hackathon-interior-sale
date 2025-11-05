@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#ececec"/>
+  <g fill="#cfcfcf">
+    <rect x="80" y="100" width="480" height="400" rx="8"/>
+    <rect x="640" y="80" width="440" height="440" rx="8"/>
+  </g>
+  <text x="50%" y="90%" font-size="20" text-anchor="middle" fill="#999">Hero placeholder — замените на своё фото</text>
+</svg>

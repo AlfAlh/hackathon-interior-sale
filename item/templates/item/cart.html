@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<div class="container" style="padding:40px 0">
+    <h2>Корзина</h2>
+
+    {% if cart_items %}
+    <table class="cart-table" style="width:100%;border-collapse:collapse;margin-top:16px">
+            <thead>
+                <tr>
+                    <th style="text-align:left;padding:8px">Товар</th>
+                    <th style="text-align:right;padding:8px">Цена</th>
+                    <th style="text-align:center;padding:8px">Кол-во</th>
+                    <th style="text-align:right;padding:8px">Сумма</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in cart_items %}
+                    <tr>
+                            <td style="padding:8px;display:flex;align-items:center">
+                                {% if row.item.image %}
+                                    <img src="{{ row.item.image.url }}" alt="{{ row.item.name }}" style="width:80px;height:80px;object-fit:cover;border-radius:6px;margin-right:12px">
+                                {% endif %}
+                                <div>{{ row.item.name }}</div>
+                            </td>
+                        <td style="padding:8px;text-align:right">{{ row.item.price_tg }} ₸</td>
+                        <td style="padding:8px;text-align:center">
+                            <form action="{% url 'item:cart_update' row.item.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="number" name="qty" value="{{ row.qty }}" min="0" style="width:80px">
+                                <button type="submit">Обновить</button>
+                            </form>
+                        </td>
+                        <td style="padding:8px;text-align:right">{{ row.subtotal }} ₸</td>
+                        <td style="padding:8px;text-align:center"><a href="{% url 'item:cart_remove' row.item.id %}">Удалить</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align:right;margin-top:18px">
+            <strong>Итого: {{ total }} ₸</strong>
+        </div>
+
+    {% else %}
+        <p>Корзина пуста.</p>
+    {% endif %}
+</div>
+{% endblock %}

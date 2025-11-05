@@ -1,0 +1,75 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cozy YU</title>
+    <link rel="stylesheet" href="{% static 'cozyyu/css/style.css' %}">
+    <script defer src="{% static 'cozyyu/js/main.js' %}"></script>
+    {% block extra_head %}{% endblock %}
+    <style>
+        /* Minimal reset for demo */
+        body{margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    </style>
+</head>
+<body>
+    <header class="cy-header">
+        <div class="container cy-header-inner">
+            <div class="left">
+                <a href="{% url 'home' %}" id="site-logo" class="site-title">
+                    <span class="logo-cozy">Cozy</span> <span class="logo-uy">UY</span>
+                </a>
+            </div>
+            <div class="center">
+                <form id="search-form" action="{% url 'item:items' %}" method="get">
+                    <input name="query" id="search-input" placeholder="Поиск товаров..." autocomplete="off">
+                    <div id="autocomplete-suggestions" class="autocomplete-suggestions"></div>
+                </form>
+            </div>
+            <div class="right">
+                <nav class="top-links">
+                    <a href="{% url 'item:items' %}">Каталог</a>
+                    <a href="{% url 'item:recommendations' %}">Рекомендации</a>
+                    <a href="{% url 'item:cart' %}">
+                        Корзина
+                        {% with cart=request.session.cart %}
+                            {% if cart %}
+                                <span style="background:var(--accent);color:#fff;border-radius:12px;padding:2px 8px;margin-left:6px;font-size:0.85rem">{{ cart|length }}</span>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                    <a href="{% url 'login' %}" class="login">Войти</a>
+                    <a href="{% url 'register' %}" class="register">Регистрация</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="cy-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>О нас</h4>
+                    <p>Cozy UY — интерьер и мебель. Контакты и информация.</p>
+                </div>
+                <div>
+                    <h4>Связаться</h4>
+                    <p>Email: info@cozyyu.example</p>
+                </div>
+                <div>
+                    <h4>Поддержка</h4>
+                    <p>Доставка, возврат, оплата</p>
+                </div>
+            </div>
+            <div class="copyright">© Cozy UY</div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
